@@ -1,11 +1,11 @@
-Algorithm : Page Rank-
-1) Initialize each page’s rank to 1/number of nodes in the graph
-2) Loop : From each page p, send a rank(p)/num of Neighbors(p) to its neighbors (the pages it has links to).
-3) Add the contributions sent.
+#Algorithm : Page Rank-
+#1) Initialize each page’s rank to 1/number of nodes in the graph
+#2) Loop : From each page p, send a rank(p)/num of Neighbors(p) to its neighbors (the pages it has links to).
+#3) Add the contributions sent.
 
 
-Code : Page Rank
----------------------------------------------------------------------
+#Code : Page Rank
+#---------------------------------------------------------------------
 val file=sc.textFile("/user/ak6755/graph.txt")
 val links = file.map{ s => val parts = s.split("\\s+") 
      (parts(0), parts(1))
@@ -24,10 +24,10 @@ ranks.saveAsTextFile("/user/ak6755/pr")
 
 
 
-Algorithm : Modified Page Rank-
-Same Algorithms as page rank, just a small modification. After comptuing the page rank, multiply by B(=0.8) and add (1-B)/NumberOfNodes in the graph.
+#Algorithm : Modified Page Rank-
+#Same Algorithms as page rank, just a small modification. After comptuing the page rank, multiply by B(=0.8) and add (1-B)/NumberOfNodes #in the graph.
 
-Modified Page Rank
+#Modified Page Rank
 ---------------------------------------
 val file=sc.textFile("/user/ak6755/graph.txt")
 val links = file.map{ s => val parts = s.split("\\s+") 
