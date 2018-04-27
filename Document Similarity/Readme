@@ -1,0 +1,43 @@
+Document Similarity and Clustering: In this problem, we will use the ideas on clustering
+and computing similarities , including k-Means, shingling and Jaccard similarity. 
+This is to be implemented in Spark.
+
+Input: The dataset contains a list of short news articles in a CSV format, where each row contains the columns { the short article, date of publication, title and
+category.
+
+map-reduce: Implement iterative k-Means using the map-reduce paradigm, where a single step of map-reduce completes one iteration of the k-Means algorithm. So, to run k-Means for i iterations,
+we will have to run a sequence of i map-reduce jobs.
+
+Number of clusters: Remember that k-Means by itself does not tell you the number of clusters actually present in the data. 
+It performs a clustering, in an unsupervised fashion, given the number of clusters it is expected to find (through our input k). 
+So in order to determine the best number of clusters for the data, 
+we need to examine inter-cluster distance and intra-cluster distance for a range of k values, or equivalently, 
+intra-cluster variance and total variance. Generally, the \knee" or the \elbow" in the plot of total intra-cluster variance (or distance) vs the value of k indicates
+the best number of clusters. 
+
+The quantity SSE is the same as intra-cluster variance viz. the sum of squared difference between each datapoint and the centroid of the cluster it belongs to.
+
+Initialization: The manner in which the k centroids are initialized to begin with sometimes makes a difference. 
+We can randomly choose any k of all the vectors as initial centroids, to begin with. 
+There are other ways you can initialize.
+
+Tasks: These are the tasks we are required to do for this problem.
+
+ Before performing k-Means, we will need to convert the documents into vectors of equal size.
+For this, use minhash signatures. we can experiment with the size of signatures. A size of
+100 may be a good idea. For shingles, you may use any type of shingles { character or word.
+If character, then 5-character shingle may be a good starting point. If word, then check out
+section 3.2.4 in the book for some ideas for news articles. Implement minhashing using map
+and reduce functions.
+
+ Run k-Means on the signatures to do the clustering (make k a parameter in your code i.e.
+don't hardcode it). Use Euclidean distance measure. Try a sequence of k values (say, from 1
+to 10) and determine the best number of clusters using the elbow method.
+
+ Now, once the clustering is done and you have determined the best number of clusters, man-
+ually check the documents in each cluster to see if the above sequence of computations have
+correctly clustered the documents according to similarity.
+
+Note: It is expected that you use map and reduce functions to implement the k-Means algorithm.
+Using map and reduce functions for computing minhashes is optional.
+
