@@ -28,7 +28,7 @@ ranks.saveAsTextFile("/user/ak6755/pr")
 #Same Algorithms as page rank, just a small modification. After comptuing the page rank, multiply by B(=0.8) and add (1-B)/NumberOfNodes #in the graph.
 
 #Modified Page Rank
----------------------------------------
+#---------------------------------------
 val file=sc.textFile("/user/ak6755/graph.txt")
 val links = file.map{ s => val parts = s.split("\\s+") 
      (parts(0), parts(1))}.distinct().groupByKey().cache()
