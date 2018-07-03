@@ -1,0 +1,44 @@
+Friend Recommendation system in Spark(scala) -
+
+I will try and show here for a small input. I have tested it for much bigger size inputs as well.
+Lets say this is the input we have (Left column is the person and right column is the list of his friends) -
+1	2,3,4
+2	1,4
+3	1
+4	1,2
+
+1) val fp = input.map(l=>l.split("\\t")).filter(l=> (l.size == 2)).map(l=>(l(0),l(1).split(","))).flatMap(a=>a._2.flatMap(z=>Array((a._1.toInt,z.toInt))))
+Firstly, we convert all friend lists to an RDD of friend pairs.
+Output -> (1,2), (1,3), (1,4), (2,1), (2,4), (3,1), (4,1), (4,2)
+
+2) val myJoin = fp.join(fp)
+Then we take the cartesian product(Join operation) to find all possible combination of friend pairs, for each person). This also includes the case where the person is fired with himself.
+Output -> (4,(1,1)), (4,(1,2)), (4,(2,1)), (4,(2,2)), (2,(1,1)), (2,(1,4)), (2,(4,1)), (2,(4,4)), (1,(2,2)), (1,(2,3)), (1,(2,4)), (1,(3,2)), (1,(3,3)), (1,(3,4)), (1,(4,2)), (1,(4,3)), (1,(4,4)), (3,(1,1))
+
+3) val allFriends = myJoin.map(e => e._2).filter(e => e._1 != e._2)
+Extract pairs of friends. We will use this to get the mutual friends in the next step.
+We filter out the values where first value is same as second value as that means that a friend i is friend with itself 
+and we do not need that tuple
+Output -> (1,2), (2,1), (1,4), (4,1), (2,3), (2,4), (3,2), (3,4), (4,2), (4,3)
+
+4) val mf = allFriends.subtract(fp)
+Find the pairs of friends that have a mutual friend. Here we subtract the pairs of friends that computed in the first 
+step from the all possible pairs from friends in the previous step.
+Output -> (2,3), (3,4), (4,3), (3,2)
+
+5) val pairFriend = mf.map(m => (m, 1)).reduceByKey((a, b) => a + b)
+Map all mutual pairs to (pair, 1) and then reduce by key, so that we dont have duplicate pairs and add all the key values
+Output -> ((2,3),1), ((3,2),1), ((3,4),1), ((4,3),1)
+
+6) Mutual Pair - restructure the pairs of friends in the previous step and sort the values for each key and map each value to , separated values. 
+Each key will have sorted values of recommended friends.
+val mp = pairFriend.map(e => (e._1._1, (e._1._2, e._2))).groupByKey()
+
+def sortList(fList: List[(Int, Int)]) : List[Int]= { 
+	fList.sortBy(a =>(-a._2, a._1)).map(a => a._1)
+}
+
+val Recommend = mp.map(t => (t._1, sortList(t._2.toList))).map(t => t._1.toString + "\t" + t._2.map(x=>x.toString).toArray.mkString(","))
+
+Output -> (4   3, 2    3, 3    2,4)
+This is the recommendation list, having recommendations for each friend.
